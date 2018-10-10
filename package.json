@@ -1,9 +1,9 @@
 {
-  "name": "woo-on-vue",
+  "name": "woo-to-vue",
   "version": "0.1.0",
   "description": "WooCommerce wrapper for Vue",
   "license": "MIT",
-  "main": "dist/woo-on-vue.js",
+  "main": "dist/woo-to-vue.js",
   "files": [
     "dist"
   ],
@@ -19,14 +19,17 @@
     "build": "node ./tools/scripts/build.js",
     "clean": "rimraf ./dist && rimraf ./coverage",
     "lint": "eslint src",
-    "precommit": "lint-staged && npm run test",
     "prepublish": "npm run build",
     "test": "jest",
     "test:coverage": "npm run test -- --coverage",
     "test:coverage:deploy": "npm run test:coverage && codecov"
   },
   "peerDependencies": {},
-  "dependencies": {},
+  "dependencies": {
+    "bluebird": "^3.5.2",
+    "oauth-1.0a": "^2.2.4",
+    "url": "^0.11.0"
+  },
   "devDependencies": {
     "app-root-dir": "^1.0.2",
     "babel-cli": "^6.26.0",
@@ -39,6 +42,7 @@
     "babel-preset-env": "^1.7.0",
     "babel-preset-react": "^6.24.1",
     "babel-preset-stage-3": "^6.24.1",
+    "babel-preset-vue-app": "^2.0.0",
     "babel-register": "^6.26.0",
     "change-case": "^3.0.2",
     "codecov": "^3.0.2",
@@ -84,10 +88,7 @@
       "jest": true,
       "node": true
     },
-    "extends": [
-      "airbnb",
-      "prettier"
-    ],
+    "extends": [],
     "rules": {
       "array-callback-return": 0,
       "camelcase": 0,
@@ -104,6 +105,7 @@
   },
   "eslintIgnoreConfig": [
     "node_modules/",
+    "src",
     "coverage/",
     "dist/"
   ],

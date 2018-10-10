@@ -1,4 +1,14 @@
-import helloWorld from './helloWorld'
-import goodbyeWorld from './goodbyeWorld'
+// import getAllProducts from './functions/products'
+import WooService from './functions/index'
+// import { WooService as _WooService } from './functions/index';
 
-export { helloWorld, goodbyeWorld }
+function WooToVue(config) {
+  return new WooService.WooService(config)
+  // this.config = config;
+}
+
+WooToVue.prototype.bar = function() {}
+// module.exports.getAllProducts = function () {
+//   return 'getAllProducts';
+// }
+export default WooToVue
