@@ -16,6 +16,7 @@
     "library"
   ],
   "scripts": {
+    "dev": "watch 'npm run build' src",
     "build": "node ./tools/scripts/build.js",
     "clean": "rimraf ./dist && rimraf ./coverage",
     "lint": "eslint src",
@@ -26,9 +27,15 @@
   },
   "peerDependencies": {},
   "dependencies": {
+    "axios": "^0.18.0",
     "bluebird": "^3.5.2",
+    "file-system": "^2.2.2",
     "oauth-1.0a": "^2.2.4",
-    "url": "^0.11.0"
+    "onchange": "^5.0.2",
+    "request": "^2.88.0",
+    "request-promise": "^4.2.2",
+    "url": "^0.11.0",
+    "watch": "^1.0.2"
   },
   "devDependencies": {
     "app-root-dir": "^1.0.2",

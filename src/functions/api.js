@@ -1,6 +1,7 @@
-// const request = require('request');
+const request = require('request');
+const rp = require('request-promise');
 const OAuth = require('oauth-1.0a')
-// var crypto  = require('crypto');
+const crypto  = require('crypto');
 const promise = require('bluebird')
 const _url = require('url')
 
@@ -38,7 +39,7 @@ function WooCommerceAPI(config) {
 WooCommerceAPI.prototype._setDefaultsOptions = function(config) {
   this.url = config.url
   this.wpAPI = config.wpAPI || false
-  this.wpAPIPrefix = config.wpAPIPrefix || 'wp-json'
+  this.wpAPIPrefix = config.wpAPIPrefix || ''
   this.version = config.version || 'v3'
   this.isSsl = /^https/i.test(this.url)
   this.consumerKey = config.consumerKey
@@ -95,7 +96,7 @@ WooCommerceAPI.prototype._normalizeQueryString = function(url) {
 
 WooCommerceAPI.prototype._getUrl = function(endpoint) {
   let url = this.url.slice(-1) === '/' ? this.url : `${this.url}/`
-  const api = this.wpAPI ? `${this.wpAPIPrefix}/` : 'wc-api/'
+  const api = this.wpAPI ? `${this.wpAPIPrefix}` : 'wc-api/'
 
   url = `${url + api + this.version}/${endpoint}`
 
@@ -139,64 +140,65 @@ WooCommerceAPI.prototype._getOAuth = function() {
   return new OAuth(data)
 }
 
-// /**
-//  * Do requests
-//  *
-//  * @param  {String}   method
-//  * @param  {String}   endpoint
-//  * @param  {Object}   data
-//  * @param  {Function} callback
-//  *
-//  * @return {Object}
-//  */
-// WooCommerceAPI.prototype._request = function(method, endpoint, data, callback) {
-//   let url = this._getUrl(endpoint);
+/**
+ * Do requests
+ *
+ * @param  {String}   method
+ * @param  {String}   endpoint
+ * @param  {Object}   data
+ * @param  {Function} callback
+ *
+ * @return {Object}
+ */
+WooCommerceAPI.prototype._request = function(method, endpoint, data, callback) {
+  let url = this._getUrl(endpoint);
 
-//   let params = {
-//     url,
-//     method,
-//     encoding: this.encoding,
-//     timeout: this.timeout,
-//     headers: {
-//       'User-Agent': `WooCommerce API Client-Node.js/${  this.classVersion}`,
-//       'Accept': 'application/json'
-//     }
-//   };
+  let params = {
+    url,
+    method,
+    encoding: this.encoding,
+    timeout: this.timeout,
+    headers: {
+      'User-Agent': `WooCommerce API Client-Node.js/${  this.classVersion}`,
+      'Accept': 'application/json'
+    }
+  };
 
-//   if (this.isSsl) {
-//     if (this.queryStringAuth) {
-//       params.qs = {
-//         consumer_key: this.consumerKey,
-//         consumer_secret: this.consumerSecret
-//       };
-//     } else {
-//       params.auth = {
-//         user: this.consumerKey,
-//         pass: this.consumerSecret
-//       };
-//     }
+  console.log('params', params);
+  if (this.isSsl) {
+    if (this.queryStringAuth) {
+      params.qs = {
+        consumer_key: this.consumerKey,
+        consumer_secret: this.consumerSecret
+      };
+    } else {
+      params.auth = {
+        user: this.consumerKey,
+        pass: this.consumerSecret
+      };
+    }
 
-//     if (!this.verifySsl) {
-//       params.strictSSL = false;
-//     }
-//   } else {
-//     params.qs = this._getOAuth().authorize({
-//       url,
-//       method
-//     });
-//   }
+    if (!this.verifySsl) {
+      params.strictSSL = false;
+    }
+  } else {
+    params.qs = this._getOAuth().authorize({
+      url,
+      method
+    });
+  }
 
-//   if (data) {
-//     params.headers['Content-Type'] = 'application/json;charset=utf-8';
-//     params.body = JSON.stringify(data);
-//   }
+  if (data) {
+    params.headers['Content-Type'] = 'application/json;charset=utf-8';
+    params.body = JSON.stringify(data);
+  }
 
-//   if (!callback) {
-//     return request(params);
-//   }
+  if (!callback) {
+    return rp(params);
+  }
 
-//   return request(params, callback);
-// };
+  return rp(params, callback);
+};
 
 // /**
 //  * GET requests
@@ -206,22 +208,23 @@ WooCommerceAPI.prototype._getOAuth = function() {
 //  *
 //  * @return {Object}
 //  */
-// WooCommerceAPI.prototype.get = function(endpoint, callback) {
-//   return this._request('GET', endpoint, null, callback);
-// };
 
-// /**
-//  * POST requests
-//  *
-//  * @param  {String}   endpoint
-//  * @param  {Object}   data
-//  * @param  {Function} callback
-//  *
-//  * @return {Object}
-//  */
-// WooCommerceAPI.prototype.post = function(endpoint, data, callback) {
-//   return this._request('POST', endpoint, data, callback);
-// };
+WooCommerceAPI.prototype.get = function(endpoint, callback) {
+  return this._request('GET', endpoint, null, callback);
+};
+
+/**
+ * POST requests
+ *
+ * @param  {String}   endpoint
+ * @param  {Object}   data
+ * @param  {Function} callback
+ *
+ * @return {Object}
+ */
+WooCommerceAPI.prototype.post = function(endpoint, data, callback) {
+  return this._request('POST', endpoint, data, callback);
+};
 
 // /**
 //  * PUT requests
@@ -236,18 +239,18 @@ WooCommerceAPI.prototype._getOAuth = function() {
 //   return this._request('PUT', endpoint, data, callback);
 // };
 
-// /**
-//  * DELETE requests
-//  *
-//  * @param  {String}   endpoint
-//  * @param  {Function} callback
-//  *
-//  * @return {Object}
-//  */
-// WooCommerceAPI.prototype.delete = function(endpoint, callback) {
-//   return this._request('DELETE', endpoint, null, callback);
-// };
-
+/**
+ * DELETE requests
+ *
+ * @param  {String}   endpoint
+ * @param  {Function} callback
+ *
+ * @return {Object}
+ */
+WooCommerceAPI.prototype.delete = function(endpoint, callback) {
+  return this._request('DELETE', endpoint, null, callback);
+};
+//
 // /**
 //  * OPTIONS requests
 //  *

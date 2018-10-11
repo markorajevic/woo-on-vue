@@ -12,6 +12,8 @@ if (inInstall()) {
 
 const nodeEnv = Object.assign({}, process.env, {
   NODE_ENV: 'production',
+  target: 'node',
+
 })
 
 exec('npx rollup -c rollup-min.config.js', nodeEnv)
